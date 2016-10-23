@@ -3,14 +3,18 @@ from abc import ABCMeta, abstractmethod
 
 State = Enum('State', 'new running sleeping restart zombie')
 
+
 class User:
     pass
+
 
 class Process:
     pass
 
+
 class File:
     pass
+
 
 class Server(metaclass=ABCMeta):
 
@@ -29,7 +33,9 @@ class Server(metaclass=ABCMeta):
     def kill(self, restart=True):
         pass
 
+
 class FileServer(Server):
+
     def __init__(self):
         '''初始化文件服务进程要求的操作'''
         self.name = 'FileServer'
@@ -47,9 +53,15 @@ class FileServer(Server):
 
     def create_file(self, user, name, permissions):
         '''检查访问权限的有效性、用户权限等'''
-        print("trying to create the file '{}' for user '{}' with permissions{}".format(name, user, permissions))
+        print(
+            "trying to create the file '{}' for user '{}' with permissions{}".format(
+                name,
+                user,
+                permissions))
+
 
 class ProcessServer(Server):
+
     def __init__(self):
         '''初始化进程服务进程要求的操作'''
         self.name = 'ProcessServer'
@@ -69,14 +81,18 @@ class ProcessServer(Server):
         '''检查用户权限和生成PID等'''
         print("trying to create the process '{}' for user '{}'".format(name, user))
 
+
 class WindowsServer:
     pass
+
 
 class NetworkServer:
     pass
 
+
 class OperatingSystem:
     '''外观'''
+
     def __init__(self):
         self.fs = FileServer()
         self.ps = ProcessServer()
@@ -89,6 +105,7 @@ class OperatingSystem:
 
     def create_process(self, user, name):
         return self.ps.create_process(user, name)
+
 
 def main():
     os = OperatingSystem()

@@ -1,4 +1,4 @@
-#以下是来自于github的示例
+# 以下是来自于github的示例
 
 # -*- coding: utf-8 -*-
 
@@ -8,6 +8,7 @@ import weakref
 
 
 class FlyweightMeta(type):
+
     def __new__(mcs, name, parents, dct):
         """
 
@@ -77,7 +78,8 @@ class Card2(object):
 if __name__ == '__main__':
     import sys
     if sys.version_info[0] > 2:
-        sys.stderr.write("!!! This example is compatible only with Python 2 ATM !!!\n")
+        sys.stderr.write(
+            "!!! This example is compatible only with Python 2 ATM !!!\n")
         raise SystemExit(0)
 
     # comment __new__ and uncomment __init__ to see the difference

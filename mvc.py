@@ -4,7 +4,9 @@ quotes = ('A man is not complete until he is married. Then he is finished.',
           'Black holes really suck...',
           'Facts are stubborn things.')
 
+
 class QuoteModel:
+
     def get_quote(self, n):
         try:
             value = quotes[n]
@@ -12,7 +14,9 @@ class QuoteModel:
             value = 'Not found!'
         return value
 
+
 class QuoteTerminalView:
+
     def show(self, quote):
         print('And the quote is: "{}"'.format(quote))
 
@@ -22,7 +26,9 @@ class QuoteTerminalView:
     def select_quote(self):
         return input('Which quote number would you like to see? ')
 
+
 class QuoteTerminalController:
+
     def __init__(self):
         self.model = QuoteModel()
         self.view = QuoteTerminalView()
@@ -39,6 +45,7 @@ class QuoteTerminalController:
                 valid_input = True
         quote = self.model.get_quote(n)
         self.view.show(quote)
+
 
 def main():
     controller = QuoteTerminalController()

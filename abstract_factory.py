@@ -8,7 +8,7 @@ class Frog:
 
     def interact_with(self, obstacle):
         print('{} the Frog encounters {} and {}!'.format(self,
-        obstacle, obstacle.action()))
+                                                         obstacle, obstacle.action()))
 
 
 class Bug:
@@ -44,13 +44,12 @@ class Wizard:
     def __str__(self):
         return self.name
 
-
     def interact_with(self, obstacle):
         print(
             '{} the Wizard battles against {} and {}!'.format(
-            self,
-            obstacle,
-            obstacle.action()))
+                self,
+                obstacle,
+                obstacle.action()))
 
 
 class Ork:
@@ -77,6 +76,7 @@ class WizardWorld:
     def make_obstacle(self):
         return Ork()
 
+
 class GameEnvironment:
 
     def __init__(self, factory):
@@ -86,6 +86,7 @@ class GameEnvironment:
     def play(self):
         self.hero.interact_with(self.obstacle)
 
+
 def validate_age(name):
     try:
         age = input('Welcome {}. How old are you? '.format(name))
@@ -94,6 +95,7 @@ def validate_age(name):
         print("Age {} is invalid, please try again...".format(age))
         return (False, age)
     return (True, age)
+
 
 def main():
     name = input("Hello. What's your name? ")
