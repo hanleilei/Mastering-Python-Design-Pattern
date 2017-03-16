@@ -1,0 +1,300 @@
+# 策略模式
+
+大多数问题都可以使用多种方法来解决。以排序问题为例，对于以一定次序把元素放入一个列表，排序算法有很多。通常来说，没有公认最适合所有场景的算法（请参考网页[t.cn/RqrBZJQ]）。一些不同的评判标准能帮助我们为不同的场景选择不同的排序算法，其中应该考虑的有以下几个。
+
+* 需要排序的元素数量：这被称为输入大小。当输入较少时，几乎所有排序算法的表现都很好，但对于大量输入，只有部分算法具有不错的性能。
+* 算法的最佳/平均/最差时间复杂度：时间复杂度是算法运行完成所花费的（大致）时间长短，不考虑系数和低阶项(在算法分析中，只考虑时间复杂度函数的最高次项，不考虑低阶项，也忽略最高次项的系数)。这是选择算法的最常见标准，但这个标准并不总是那么充分。
+* 算法的空间复杂度：空间复杂度是充分地运行一个算法所需要的（大致）物理内存量。在我们处理大数据或在嵌入式系统（通常内存有限）中工作时，这个因素非常重要。
+* 算法的稳定性：在执行一个排序算法之后，如果能保持相等值元素原来的先后相对次序，则认为它是稳定的。
+* 算法的代码实现复杂度：如果两个算法具有相同的时间/空间复杂度，并且都是稳定的，那么知道哪个算法更易于编码实现和维护也是很重要的。
+
+可能还有更多的评判标准值得考虑，但重要的是，我们真的只能使用单个排序算法来应对所有情况吗？答案当然不是。一个更好的方案是把所有排序算法纳为己用，然后使用上面提到的标准针对当前情况选择最好的算法。这就是策略模式的作用。
+
+策略模式（Strategy pattern）鼓励使用多种算法来解决一个问题，其杀手级特性是能够在运行时透明地切换算法（客户端代码对变化尤感知）。因此，如果你有两种算法，并且知道其中一种对少量输入效果更好，另一种对大量输入效果更好，则可以使用策略模式在运行时基于输入数据决定使用哪种算法。
+
+以下示例来自于Github：
+
+```python
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+http://stackoverflow.com/questions/963965/how-is-this-strategy-pattern
+ -written-in-python-the-sample-in-wikipedia
+In most of other languages Strategy pattern is implemented via creating some
+base strategy interface/abstract class and subclassing it with a number of
+concrete strategies (as we can see at
+http://en.wikipedia.org/wiki/Strategy_pattern), however Python supports
+higher-order functions and allows us to have only one class and inject
+functions into it's instances, as shown in this example.
+"""
+import types
+
+
+class StrategyExample:
+
+    def __init__(self, func=None):
+        self.name = 'Strategy Example 0'
+        if func is not None:
+            self.execute = types.MethodType(func, self)
+
+    def execute(self):
+        print(self.name)
+
+
+def execute_replacement1(self):
+    print(self.name + ' from execute 1')
+
+
+def execute_replacement2(self):
+    print(self.name + ' from execute 2')
+
+
+if __name__ == '__main__':
+    strat0 = StrategyExample()
+
+    strat1 = StrategyExample(execute_replacement1)
+    strat1.name = 'Strategy Example 1'
+
+    strat2 = StrategyExample(execute_replacement2)
+    strat2.name = 'Strategy Example 2'
+
+    strat0.execute()
+    strat1.execute()
+    strat2.execute()
+
+### OUTPUT ###
+# Strategy Example 0
+# Strategy Example 1 from execute 1
+# Strategy Example 2 from execute 2
+```
+
+## 现实生活的例子
+
+去机场赶飞机是现实中使用策略模式的一个恰当例子。
+
+* 如果想省钱，并且早点出发，那么可以坐公交车/地铁。
+* 如果不介意支付停车费，并且有自己的汽车，那么可以开车去。
+* 如果没有自己的车，又比较急，则可以打车。
+
+这是费用、时间、便利性等因素之间的一个折中权衡。下图展示了以多种方式（策略）去机场的一个例子，经www.sourcemaking.com允许使用（请参考网页[t.cn/RqrBAeJ]）。
+
+## 软件的例子
+
+Python的sorted()和list.sort()函数是策略模式的例子。两个函数都接受一个命名参数key，这个参数本质上是实现了一个排序策略的函数的名称（请参考[Eckel08，第202页]）。
+
+下面的例子（代码在文件langs.py中）展示了如何用以下方式使用两种不同的策略对编程语言进行排序。
+
+* 按字母顺序
+* 基于它们的流行度（使用TIOBE指数，请参考网页[t.cn/RGQ0jM7]）
+
+namedtuple编程语言（请参考网页[t.cn/RqrBUrf]）用于保存编程语言的统计数据。命名元组是一种易于创建、轻量、不可变的对象类型，与普通元组兼容，但也可以看作一个对象（可以使用常见的类表示法通过名称调用）。命名元组可用于替代以下各项（请参考网页[t.cn/RqrBGwP]）。
+
+* 在我们关注不可变特性时，替代一个类。
+* 在值得使用对象表示法来创建可读性更高的代码时，替代一个元组。
+
+顺便说明一下pprint和attrgetter模块。pprint模块用于美化输出一个数据结构，**attrgetter用于通过属性名访问class或namedtuple的属性**。也可以使用一个lambda函数来替代使用attrgetter，但我觉得attrgetter的可读性更高。
+
+
+```python
+import pprint  
+from collections import namedtuple
+from operator import attrgetter
+
+if __name__ == '__main__':
+    ProgrammingLang = namedtuple('ProgrammingLang', 'name ranking')
+    stats = (('Ruby', 14), ('Javascript', 8), ('Python', 7),
+                  ('Scala', 31), ('Swift', 18), ('Lisp', 23))
+    lang_stats = [ProgrammingLang(n, r) for n, r in stats]
+    pp = pprint.PrettyPrinter(indent=5)
+    pp.pprint(sorted(lang_stats, key=attrgetter('name')))
+    print()
+    pp.pprint(sorted(lang_stats, key=attrgetter('ranking')))
+```
+
+    [    ProgrammingLang(name='Javascript', ranking=8),
+         ProgrammingLang(name='Lisp', ranking=23),
+         ProgrammingLang(name='Python', ranking=7),
+         ProgrammingLang(name='Ruby', ranking=14),
+         ProgrammingLang(name='Scala', ranking=31),
+         ProgrammingLang(name='Swift', ranking=18)]
+
+    [    ProgrammingLang(name='Python', ranking=7),
+         ProgrammingLang(name='Javascript', ranking=8),
+         ProgrammingLang(name='Ruby', ranking=14),
+         ProgrammingLang(name='Swift', ranking=18),
+         ProgrammingLang(name='Lisp', ranking=23),
+         ProgrammingLang(name='Scala', ranking=31)]
+
+
+Java API也使用了策略设计模式。java.util.Comparator是一个接口，包含一个compare()方法，该方法本质上是一个策略，可传给排序方法，比如Collections.sort和Arrays.sort（请参考网页[t.cn/RqrB5o9]）。
+
+## 应用案例
+
+策略模式是一种非常通用的设计模式，可应用的场景很多。一般来说，不论何时希望动态、透明地应用不同算法，策略模式都是可行之路。这里所说不同算法的意思是，结果相同但实现方案不同的一类算法。这意味着算法结果应该是完全一致的，但每种实现都有不同的性能和代码复杂性（举例来说，对比一下顺序查找和二分查找）。
+
+我们已看到Python和Java如何使用策略模式来支持不同的排序算法。然而，策略模式并不限于排序问题，也可用于创建各种不同的资源过滤器（身份验证、H志记录、数据压缩和加密等），请参考网页[t.cn/RqrBchI]。
+
+策略模式的另一个应用是创建不同的样式表现，为了实现可移植性（例如，不同平台之间断行的不同）或动态地改变数据的表现。
+
+另一个值得一提的应用是模拟；例如模拟机器人，一些机器人比另一些更有攻击性，一些机器人速度更快，等等。机器人行为中的所有不同之处都可以使用不同的策略来建模（请参考网页[t.cn/RqrBf2q]）。
+
+## 实现
+关于策略模式的实现没有太多可说的。在函数非一等公民的语言中，每个策略都要用一个不同的类来实现。Wikipedia页面中有UML图展示了这一点（请参考网页[t.cn/RqrBMhW]）。在Python中，我们可以把函数看作是普通的变量，这就简化了策略模式的实现。
+
+假设我们要实现一个算法来检测在一个字符串中是否所有字符都是唯一的。例如，如果输入字符串dream，算法应返回true，因为没有字符是重复的。如果输入字符串pizza，算法应返回false，因为字母z出现了两次。注意，重复字符不一定是连续的，并且字符串也不一定是一个合法单词。对于字符串1r2a3ae，算法也应该返回false，因为其中字母a出现了两次。
+
+在仔细考虑问题之后，我们提出一种实现：对字符串进行排序并逐对比较所有字符。我们首先实现pairs()函数，它会返回所有相邻字符对的一个序列seq。
+
+
+```python
+def pairs(seq):
+    n = len(seq)
+    for i in range(n):
+        yield seq[i], seq[(i + 1) % n]
+```
+
+接下来，实现allUniqueSort()函数。它接受一个字符串参数s，如果该字符串中所有字符都是唯一的，则返回True；否则，返回False。为演示策略模式，我们进行一些简化，假设这个算法的伸缩性不好，对于不超过5个字符的字符串才能工作良好。对于更长的字符串，通过捕入一条sleep语旬来模拟速度减缓。
+
+
+```python
+SLOW = 3 # 单位为秒
+LIMIT = 5 # 字符数
+WARNING = 'too bad, you picked the slow algorithm :('
+
+def allUniqueSort(s):
+    if len(s) > LIMIT:
+        print(WARNING)
+        time.sleep(SLOW)
+    srtStr = sorted(s)
+    for (c1, c2) in pairs(srtStr):
+        if c1 == c2:
+            return False
+    return True
+```
+
+我们对allUniqueSort()的性能并不满意，所以尝试考虑优化的方式。一段时间之后，我们提出一个新算法allUniqueSet()，消除排序的需要。在这里，我们使用一个集合来实现算法。如果正在检测的字符已经被捕入到集合中，则意味着字符串中并非所有字符都是唯一的。
+
+
+```python
+def allUniqueSet(s):
+    if len(s) < LIMIT:
+        print(WARNING)
+        time.sleep(SLOW)
+
+    return True if len(set(s)) == len(s) else False
+```
+
+不幸的是，allUniqueSet()虽然没有伸缩性问题，但出于一些奇怪的原因，它检测短字符串的性能比allUniqueSort()更差。这样的话我们能做点什么呢？没关系，我们可以保留两个算法，并根据待检测字符串的长度来选择最合适的那个算法。函数allUnique()接受一个输入字符串s和一个策略函数strategy，在这里是allUniqueSort()和allUniqueSet()中的一个。函数allUnique执行输入的策略，并向调用者返回结果。
+
+使用main()函数可以执行以下操作。
+
+* 输入待检测字符唯一性的单词
+* 选择要使用的策略
+
+该函数还进行了一些基本的错误处理，并让用户能够正常退出程序。
+
+
+```python
+def main():
+    while True:
+        word = None
+        while not word:
+            word = input('Insert word (type quit to exit)> ')
+
+            if word == 'quit':
+                print('bye')
+                return
+
+            strategy_picked = None
+            strategies = { '1': allUniqueSet, '2': allUniqueSort }
+            while strategy_picked not in strategies.keys():
+                strategy_picked = input('Choose strategy: [1] Use a set, [2] Sort and pair> ')
+
+                try:
+                    strategy = strategies[strategy_picked]
+                    print('allUnique({}): {}'.format(word, allUnique(word, strategy)))
+                except KeyError as err:
+                    print('Incorrect option: {}'.format(strategy_picked))
+            print()
+```
+
+下面是该示例的完整代码（文件strategy.py）。
+
+```python
+import time
+
+SLOW = 3                        # in seconds
+LIMIT = 5                       # in characters
+WARNING = 'too bad, you picked the slow algorithm :('
+
+def pairs(seq):
+    n = len(seq)
+    for i in range(n):
+        yield seq[i], seq[(i + 1) % n]
+
+def allUniqueSort(s):
+   if len(s) > LIMIT:
+       print(WARNING)
+       time.sleep(SLOW)
+   srtStr = sorted(s)
+   for (c1, c2) in pairs(srtStr):
+       if c1 == c2:
+           return False
+   return True
+
+def allUniqueSet(s):
+    if len(s) < LIMIT:
+        print(WARNING)
+        time.sleep(SLOW)
+    return True if len(set(s)) == len(s) else False
+
+def allUnique(s, strategy):
+    return strategy(s)
+
+def main():
+    while True:
+        word = None
+        while not word:
+            word = input('Insert word (type quit to exit)> ')
+
+            if word == 'quit':
+                print('bye')
+                return
+
+            strategy_picked = None
+            strategies = { '1': allUniqueSet, '2': allUniqueSort }
+            while strategy_picked not in strategies.keys():
+                strategy_picked = input('Choose strategy: [1] Use a set, [2] Sort and pair> ')
+
+                try:
+                    strategy = strategies[strategy_picked]
+                    print('allUnique({}): {}'.format(word, allUnique(word, strategy)))
+                except KeyError as err:
+                    print('Incorrect option: {}'.format(strategy_picked))
+            print()
+
+if __name__ == '__main__':
+    main()
+```
+
+第一个单词（ballon）多于5个字符，并且不是所有字符都是唯一的。这种情况下，两个算法都返回了正确结果（False），但allUniqueSort()更慢，用户也收到了警告。
+
+第二个单词（bye）少于5个字符，并且所有字符都是唯一的。再一次，两个算法都返回了期望的结果（True），但这一次，allUniqueSet()更慢，用户也再一次收到警告。
+
+最后一个单词（h）是一个特殊案例。allUniqueSet()运行慢，处理正确，返回期望的True；算法allUniqueSort()返回超快，但结果错误。你能明臼为什么吗？作为练习，请修复allUniqueSort()算法。你也许想禁止处理单字符的单词，我觉得这样挺不错（相比返回一个错误结果，这样更好）。
+
+通常，**我们想要使用的策略不应该由用户来选择。策略模式的要点是可以透明地使用不同的算法**。修改一下代码，使得程序始终选择更快的算法。
+
+我们的代码有两种常见用户。一种是最终用户，他们不应该关心代码中发生的事情。为达到这个效果，我们可以遵循前一段给出的提示来实现。另一类用户是其他开发人员。假设我们想创建一个供其他开发人员使用的API。如何做到让他们不用关心策略模式？一个提示是考虑在一个公用类（例如，AllUnique）中封装两个函数。这样，其他开发人员只需要创建一个AllUnique类实例，并执行单个方法，例如test()。在这个方法中需要做些什么呢？
+
+## 小结
+
+本章中，我们学习了策略设计模式。策略模式通常用在我们希望对同一个问题透明地使用多种方案时。如果并不存在针对所有输入数据和所有情况的完美算法，那么我们可以使用策略模式，动态地决定在每种情况下应使用哪种算法。现实中，在我们想赶去机场乘飞机时会使用策略模式。
+
+Python使用策略模式让客户端代码决定如何对一个数据结构中的元素进行排序。我们看到了一个例子，基于TIOBE指数排行榜对编程语言进行排序。
+
+策略设计模式的使用并不限于排序领域。加密、压缩、H志记录及其他资源处理的领域都可以使用策略模式来提供不同的数据处理方式。可移植性是策略模式的另一个用武之地。模拟也是另一个策略模式适用的领域。
+
+通过实现两种不同算法来检测一个单词中所有字符的唯一性，我们学习了Python如何因其具有一等函数而简化了策略模式的实现。
+
+在本书的第16章中，我们将学习模板模式。该模式用于抽取一个算法的通用部分，从而提高代码复用。
