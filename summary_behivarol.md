@@ -2,8 +2,6 @@
 
 行为型模式关注做事的过程，也就是算法及对象间的交互。提供了构思及规划计算过程的好办法。
 
-
-
 Pattern	                Description
 chain	                apply a chain of successive handlers to try and process the data
 catalog	                general methods will call different specialized methods based on construction parameter
@@ -23,17 +21,22 @@ visitor	                invoke a callback for all items of a collection
 
 已经介绍过了责任链（chain），命令（command），观察者（observer），状态（state），策略（strategy），模版（template），访问者（visitor），似乎很多没有介绍过，但是对于Python语言，其中的迭代器（iterator）模式似乎很是多余，故在此忽略。
 
-下面将扼要介绍以下catalog，chaining_method，mediator，memnto，publish_subscribe，registry和specification这些模式。
+下面将扼要介绍以下catalog，mediator，memnto，publish_subscribe，registry和specification这些模式。
+
+对于catalog模式：
+
+
+对于 mediator（中介） 模式：
+
+
+对于 memnto（备忘录） 模式：
 
 
 
+对于 registry 模式：
 
 
-
-
-
-
-
+对于 specification 模式：
 
 
 

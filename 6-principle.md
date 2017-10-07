@@ -1,4 +1,4 @@
-设计模式六大原则
+# 设计模式六大原则
 
 作者：zhengzhb ，发布于2012-11-2,来源：CSDN
 
@@ -16,7 +16,7 @@
 
 设计模式六大原则（6）：开闭原则
 
-设计模式六大原则（1）：单一职责原则
+## 设计模式六大原则（1）：单一职责原则
 
 定义：不要存在多于一个导致类变更的原因。通俗的说，即一个类只负责一项职责。
 问题由来：类T负责两个不同的职责：职责P1，职责P2。当由于职责P1需求发生改变而需要修改类T时，有可能会导致原本运行正常的职责P2功能发生故障。
@@ -43,6 +43,19 @@ public class Client{
 		animal.breathe("猪");
 	}
 }
+```
+
+以下是Python的实现：
+
+```python
+class Animal():
+    def breathe(self, animal):
+        print(animal + " 呼吸空气")
+
+animal = Animal()
+animal.breathe("牛")  
+animal.breathe("羊")
+animal.breathe("猪")  
 ```
 运行结果：
 
